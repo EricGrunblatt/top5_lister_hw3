@@ -10,7 +10,6 @@ function Top5Item(props) {
     const { store } = useContext(GlobalStoreContext);
     const [draggedTo, setDraggedTo] = useState(0);
     const [ editItemActive, setEditItemActive ] = useState(false);
-    const [ text, setText ] = useState("");
 
     function handleDragStart(event) {
         event.dataTransfer.setData("item", event.target.id);
@@ -56,16 +55,11 @@ function Top5Item(props) {
         setEditItemActive(newActive);
     }
 
-    function handleUpdateItemText(event) {
-        if(props.text !== event.target.value) {
-            setText(event.target.value);
-            store.addChangeItemTransaction(index, props.text, event.target.value);
-        }
-    }
-
     function handleKeyPress(event) {
         if (event.code === "Enter") {
-            handleUpdateItemText(event);
+            if(props.text !== event.target.value) {
+                store.addChangeItemTransaction(index, props.text, event.target.value);
+            }
             toggleItemEdit();
         }
     }
