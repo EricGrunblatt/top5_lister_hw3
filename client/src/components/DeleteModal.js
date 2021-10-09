@@ -15,10 +15,11 @@ function DeleteModal() {
     if (store.listMarkedForDeletion) {
         name = store.listMarkedForDeletion.name;
     }
-    function handleDeleteList(event) {
-        store.deleteMarkedList();
+    function handleDeleteList() {
+        console.log(store.listMarkedForDeletion._id);
+        store.deleteMarkedList(store.listMarkedForDeletion._id);
     }
-    function handleCloseModal(event) {
+    function handleCloseModal() {
         store.hideDeleteListModal();
     }
     return (

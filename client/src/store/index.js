@@ -21,7 +21,8 @@ export const GlobalStoreActionType = {
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
     SET_ITEM_NAME_EDIT_ACTIVE: "SET_ITEM_NAME_EDIT_ACTIVE",
-    LIST_MARKED_FOR_DELETION: "LIST_MARKED_FOR_DELETION"
+    LIST_MARKED_FOR_DELETION: "LIST_MARKED_FOR_DELETION",
+    DELETE_LIST: "DELETE_LIST"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -109,6 +110,17 @@ export const useGlobalStore = () => {
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: payload
+                })
+            }
+            // WHILE DELETING THE LIST
+            case GlobalStoreActionType.DELETE_LIST: {
+                return setStore({
+                    idNamePairs: payload,
+                    currentList: store.currentList,
+                    newListCounter: store.newListCounter-1,
+                    isListNameEditActive: false,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: store.listMarkedForDeletion
                 })
             }
             default:
@@ -253,8 +265,11 @@ export const useGlobalStore = () => {
         tps.doTransaction();
     }
 
-    store.getListMarkedForDeletion = function (id) {
-        store.setListMarkedForDeletion(id);
+    store.getListMarkedForDeletion = function (list) {
+        storeReducer({
+            type: GlobalStoreActionType.LIST_MARKED_FOR_DELETION,
+            payload: list
+        })
         store.showDeleteListModal();
     }
 
@@ -269,7 +284,26 @@ export const useGlobalStore = () => {
     }
 
     store.deleteMarkedList = function (id) {
-
+        // Get the correct list
+        async function asyncDeleteListById(id) {
+            let response = await api.deleteTop5ListById(id);
+            if(response.data.success) {
+                async function asyncGetNewListPairs() {
+                    response = await api.getTop5ListPairs();
+                    if(response.data.success) {
+                        let pairsArray = response.data.idNamePairs;
+                        storeReducer({
+                            type: GlobalStoreActionType.DELETE_LIST,
+                            payload: pairsArray
+                        })
+                    }
+                }
+                asyncGetNewListPairs();
+            }
+        }
+        asyncDeleteListById(id);
+        store.hideDeleteListModal();
+        window.location.reload(false);
     }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
@@ -283,12 +317,6 @@ export const useGlobalStore = () => {
         storeReducer({
             type: GlobalStoreActionType.SET_ITEM_NAME_EDIT_ACTIVE,
             payload: null
-        })
-    }
-    store.setListMarkedForDeletion = function (id) {
-        storeReducer({
-            type: GlobalStoreActionType.LIST_MARKED_FOR_DELETION,
-            payload: id
         })
     }
 
