@@ -9,6 +9,8 @@ import { GlobalStoreContext } from '../store'
 function Top5Item(props) {
     const { store } = useContext(GlobalStoreContext);
     const [draggedTo, setDraggedTo] = useState(0);
+    const [ editItemActive, setEditItemActive ] = useState(false);
+    const [ text, setText ] = useState("");
 
     function handleDragStart(event) {
         event.dataTransfer.setData("item", event.target.id);
@@ -41,10 +43,55 @@ function Top5Item(props) {
         store.addMoveItemTransaction(sourceId, targetId);
     }
 
+    function handleToggleItemEdit(event) {
+        event.stopPropagation();
+        toggleItemEdit();
+    }
+
+    function toggleItemEdit() {
+        let newActive = !editItemActive;
+        if (newActive) {
+            store.setIsItemEditActive();
+        }
+        setEditItemActive(newActive);
+    }
+
+    function handleUpdateItemText(event) {
+        if(props.text !== event.target.value) {
+            setText(event.target.value);
+            store.addChangeItemTransaction(index, props.text, event.target.value);
+        }
+    }
+
+    function handleKeyPress(event) {
+        if (event.code === "Enter") {
+            handleUpdateItemText(event);
+            toggleItemEdit();
+        }
+    }
+
+    function handleItemFocus(event) {
+        event.target.select();
+    }
+
     let { index } = props;
     let itemClass = "top5-item";
     if (draggedTo) {
         itemClass = "top5-item-dragged-to";
+    }
+    if (editItemActive) {
+        return (
+            <input
+                autoFocus
+                id={"item-" + (index + 1)}
+                className={itemClass}
+                type='text'
+                onKeyPress={handleKeyPress}
+                onFocus={handleItemFocus}
+                defaultValue={props.text}
+                
+            />
+        );
     }
     return (
         <div
@@ -62,6 +109,7 @@ function Top5Item(props) {
                 id={"edit-item-" + index + 1}
                 className="list-card-button"
                 value={"\u270E"}
+                onClick={handleToggleItemEdit}
             />
             {props.text}
         </div>)
