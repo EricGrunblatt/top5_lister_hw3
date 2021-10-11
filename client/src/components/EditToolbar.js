@@ -23,8 +23,23 @@ function EditToolbar() {
         store.closeCurrentList();
     }
     let editStatus = false;
-    if (store.isListNameEditActive) {
+    let disableUndo = "";
+    let disableRedo = "";
+    store.disableButtons();
+    if(store.disableUndo) {
+        disableUndo = "-disabled";
+    }
+    if(store.disableRedo) {
+        disableRedo = "-disabled";
+    }
+    if (store.isItemEditActive || store.isListNameEditActive) {
         editStatus = true;
+    }
+    let disableClose = "";
+    if (store.currentList === null) {
+        disableUndo = "-disabled";
+        disableRedo = "-disabled";
+        disableClose = "-disabled";
     }
     return (
         <div id="edit-toolbar">
@@ -32,21 +47,21 @@ function EditToolbar() {
                 disabled={editStatus}
                 id='undo-button'
                 onClick={handleUndo}
-                className={enabledButtonClass}>
+                className={enabledButtonClass+disableUndo}>
                 &#x21B6;
             </div>
             <div
                 disabled={editStatus}
                 id='redo-button'
                 onClick={handleRedo}
-                className={enabledButtonClass}>
+                className={enabledButtonClass+disableRedo}>
                 &#x21B7;
             </div>
             <div
                 disabled={editStatus}
                 id='close-button'
                 onClick={handleClose}
-                className={enabledButtonClass}>
+                className={enabledButtonClass+disableClose}>
                 &#x24E7;
             </div>
         </div>

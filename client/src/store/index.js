@@ -39,7 +39,9 @@ export const useGlobalStore = () => {
         newListCounter: 0,
         listNameActive: false,
         itemActive: false,
-        listMarkedForDeletion: null
+        listMarkedForDeletion: null,
+        disableUndo: true,
+        disableRedo: true
     });
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
@@ -275,6 +277,22 @@ export const useGlobalStore = () => {
     }
     store.redo = function () {
         tps.doTransaction();
+    }
+
+    store.disableButtons = function () {
+        if(tps.hasTransactionToRedo()) {
+            store.disableRedo = false;
+        }
+        else {
+            store.disableRedo = true;
+        }
+
+        if(tps.hasTransactionToUndo()) {
+            store.disableUndo = false;
+        }
+        else {
+            store.disableUndo = true;
+        }
     }
 
     store.getListMarkedForDeletion = function (list) {

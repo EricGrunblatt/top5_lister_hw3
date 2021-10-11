@@ -49,6 +49,7 @@ function ListCard(props) {
         let id = event.target.id.substring("list-".length);
         store.changeListName(id, text);
         toggleEdit();
+        store.closeCurrentList();
     }
 
     function handleFocus(event) {
