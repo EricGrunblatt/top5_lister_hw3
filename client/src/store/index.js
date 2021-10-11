@@ -22,7 +22,8 @@ export const GlobalStoreActionType = {
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
     SET_ITEM_NAME_EDIT_ACTIVE: "SET_ITEM_NAME_EDIT_ACTIVE",
     LIST_MARKED_FOR_DELETION: "LIST_MARKED_FOR_DELETION",
-    DELETE_LIST: "DELETE_LIST"
+    DELETE_LIST: "DELETE_LIST",
+    CREATE_LIST: "CREATE_LIST"
 }
 
 // WE'LL NEED THIS TO PROCESS TRANSACTIONS
@@ -46,6 +47,17 @@ export const useGlobalStore = () => {
     const storeReducer = (action) => {
         const { type, payload } = action;
         switch (type) {
+            // CREATE A NEW LIST
+            case GlobalStoreActionType.CREATE_LIST: {
+                return setStore({
+                    idNamePairs: payload,
+                    currentList: null,
+                    newListCounter: store.newListCounter+1,
+                    isListNameEditActive: false,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: null
+                })
+            }
             // LIST UPDATE OF ITS NAME
             case GlobalStoreActionType.CHANGE_LIST_NAME: {
                 return setStore({
@@ -117,7 +129,7 @@ export const useGlobalStore = () => {
                 return setStore({
                     idNamePairs: payload,
                     currentList: store.currentList,
-                    newListCounter: store.newListCounter-1,
+                    newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: store.listMarkedForDeletion
@@ -303,7 +315,31 @@ export const useGlobalStore = () => {
         }
         asyncDeleteListById(id);
         store.hideDeleteListModal();
-        window.location.reload(false);
+    }
+
+    store.createNewList = function () {
+        // Create a new list
+        let listString = '{"name": "Untitled'+store.newListCounter+'", "items": ["?", "?", "?", "?", "?"]}';
+        console.log(listString);
+        let newList = JSON.parse(listString);
+        async function asyncCreateList(newList) {
+            let response = await api.createTop5List(newList);
+            store.setCurrentList(response.data.top5List._id);
+            if(response.data.success) {
+                async function asyncGetNewListPairs() {
+                    response = await api.getTop5ListPairs();
+                    if(response.data.success) {
+                        let pairsArray = response.data.idNamePairs;
+                        storeReducer({
+                            type: GlobalStoreActionType.CREATE_LIST,
+                            payload: pairsArray
+                        })
+                    }
+                }
+                asyncGetNewListPairs();
+            }
+        }
+        asyncCreateList(newList);
     }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
