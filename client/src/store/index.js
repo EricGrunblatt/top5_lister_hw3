@@ -21,6 +21,7 @@ export const GlobalStoreActionType = {
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
     SET_ITEM_NAME_EDIT_ACTIVE: "SET_ITEM_NAME_EDIT_ACTIVE",
+    SET_ITEM_NAME_EDIT_INACTIVE: "SET_ITEM_NAME_EDIT_INACTIVE",
     LIST_MARKED_FOR_DELETION: "LIST_MARKED_FOR_DELETION",
     DELETE_LIST: "DELETE_LIST",
     CREATE_LIST: "CREATE_LIST"
@@ -111,6 +112,28 @@ export const useGlobalStore = () => {
                     currentList: payload,
                     newListCounter: store.newListCounter,
                     isListNameEditActive: true,
+                    isItemEditActive: false,
+                    listMarkedForDeletion: null
+                });
+            }
+            // START EDITING AN ITEM
+            case GlobalStoreActionType.SET_ITEM_NAME_EDIT_ACTIVE: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: store.currentList,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: false,
+                    isItemEditActive: true,
+                    listMarkedForDeletion: null
+                });
+            }
+            // STOP EDITING AN ITEM
+            case GlobalStoreActionType.SET_ITEM_NAME_EDIT_INACTIVE: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: store.currentList,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null
                 });
@@ -374,6 +397,12 @@ export const useGlobalStore = () => {
     store.setIsItemEditActive = function () {
         storeReducer({
             type: GlobalStoreActionType.SET_ITEM_NAME_EDIT_ACTIVE,
+            payload: null
+        })
+    }
+    store.setIsItemEditInactive = function () {
+        storeReducer({
+            type: GlobalStoreActionType.SET_ITEM_NAME_EDIT_INACTIVE,
             payload: null
         })
     }

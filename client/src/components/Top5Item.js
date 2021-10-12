@@ -39,12 +39,16 @@ function Top5Item(props) {
         setDraggedTo(false);
 
         // UPDATE THE LIST
-        store.addMoveItemTransaction(sourceId, targetId);
+        if(sourceId !== targetId) {
+            store.addMoveItemTransaction(sourceId, targetId);
+        }
     }
 
     function handleToggleItemEdit(event) {
-        event.stopPropagation();
-        toggleItemEdit();
+        if(!editItemActive) {
+            event.stopPropagation();
+            toggleItemEdit();
+        }
     }
 
     function toggleItemEdit() {
@@ -61,6 +65,7 @@ function Top5Item(props) {
                 store.addChangeItemTransaction(index, props.text, event.target.value);
             }
             toggleItemEdit();
+            store.setIsItemEditInactive();
         }
     }
 
@@ -73,6 +78,14 @@ function Top5Item(props) {
     if (draggedTo) {
         itemClass = "top5-item-dragged-to";
     }
+
+    let disableButtons = false;
+    let draggable = true;
+    if(store.isItemEditActive) {
+        disableButtons = true;
+        draggable = false;
+    }
+
     if (editItemActive) {
         return (
             <input
@@ -96,9 +109,10 @@ function Top5Item(props) {
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            draggable="true"
+            draggable={draggable}
         >
             <input
+                disabled={disableButtons}
                 type="button"
                 id={"edit-item-" + index + 1}
                 className="list-card-button"

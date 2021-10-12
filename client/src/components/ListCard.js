@@ -75,7 +75,6 @@ function ListCard(props) {
 
     let cardElement =
         <div
-            disabled={cardStatus}
             id={idNamePair._id}
             key={idNamePair._id}
             onClick={handleLoadList}

@@ -36,7 +36,7 @@ function EditToolbar() {
         editStatus = true;
     }
     let disableClose = "";
-    if (store.currentList === null) {
+    if (store.currentList === null || store.isItemEditActive) {
         disableUndo = "-disabled";
         disableRedo = "-disabled";
         disableClose = "-disabled";
