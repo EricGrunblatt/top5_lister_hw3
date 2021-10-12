@@ -16,7 +16,7 @@ function ListCard(props) {
     const { idNamePair, selected } = props;
 
     function handleLoadList(event) {
-        if (!event.target.disabled) {
+        if (!cardStatus) {
             let _id = event.target.id;
             if (_id.indexOf('list-card-text-') >= 0)
                 _id = ("" + _id).substring("list-card-text-".length);
@@ -72,8 +72,10 @@ function ListCard(props) {
     if (store.isListNameEditActive) {
         cardStatus = true;
     }
+
     let cardElement =
         <div
+            disabled={cardStatus}
             id={idNamePair._id}
             key={idNamePair._id}
             onClick={handleLoadList}
@@ -110,7 +112,6 @@ function ListCard(props) {
                 className='list-card'
                 type='text'
                 onKeyPress={handleKeyPress}
-                onBlur={handleBlur}
                 onFocus={handleFocus}
                 onChange={handleUpdateText}
                 defaultValue={idNamePair.name}

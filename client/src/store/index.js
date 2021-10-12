@@ -52,9 +52,9 @@ export const useGlobalStore = () => {
             // CREATE A NEW LIST
             case GlobalStoreActionType.CREATE_LIST: {
                 return setStore({
-                    idNamePairs: payload,
+                    idNamePairs: payload.idNamePairs,
                     currentList: null,
-                    newListCounter: store.newListCounter+1,
+                    newListCounter: payload.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null
@@ -338,19 +338,23 @@ export const useGlobalStore = () => {
     store.createNewList = function () {
         // Create a new list
         let listString = '{"name": "Untitled'+store.newListCounter+'", "items": ["?", "?", "?", "?", "?"]}';
-        console.log(listString);
         let newList = JSON.parse(listString);
         async function asyncCreateList(newList) {
             let response = await api.createTop5List(newList);
-            store.setCurrentList(response.data.top5List._id);
+            //store.setCurrentList(response.data.top5List._id);
             if(response.data.success) {
                 async function asyncGetNewListPairs() {
                     response = await api.getTop5ListPairs();
                     if(response.data.success) {
                         let pairsArray = response.data.idNamePairs;
+                        let newCounter = store.newListCounter + 1;
+                        console.log(newCounter);
                         storeReducer({
                             type: GlobalStoreActionType.CREATE_LIST,
-                            payload: pairsArray
+                            payload: {
+                                idNamePairs: pairsArray,
+                                newListCounter: newCounter
+                            }
                         })
                     }
                 }
