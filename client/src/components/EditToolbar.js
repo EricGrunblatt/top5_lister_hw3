@@ -19,12 +19,16 @@ function EditToolbar() {
         store.redo();
     }
     function handleClose() {
-        history.push("/");
-        store.closeCurrentList();
+        if(!store.isItemEditActive) {
+            history.push("/");
+            store.closeCurrentList();
+        }
+        
     }
     let editStatus = false;
     let disableUndo = "";
     let disableRedo = "";
+    let disableClose = "";
     store.disableButtons();
     if(store.disableUndo) {
         disableUndo = "-disabled";
@@ -33,10 +37,13 @@ function EditToolbar() {
         disableRedo = "-disabled";
     }
     if (store.isItemEditActive || store.isListNameEditActive) {
+        disableUndo = "-disabled";
+        disableRedo = "-disabled";
+        disableClose="-disabled";
         editStatus = true;
     }
-    let disableClose = "";
-    if (store.currentList === null || store.isItemEditActive) {
+    if (store.currentList === null) {
+        editStatus = true;
         disableUndo = "-disabled";
         disableRedo = "-disabled";
         disableClose = "-disabled";
