@@ -56,7 +56,7 @@ export const useGlobalStore = () => {
                 return setStore({
                     idNamePairs: payload.idNamePairs,
                     currentList: null,
-                    newListCounter: payload.newListCounter,
+                    newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     listMarkedForDeletion: null
@@ -377,6 +377,7 @@ export const useGlobalStore = () => {
     store.createNewList = function () {
         // Create a new list
         let listString = '{"name": "Untitled'+store.newListCounter+'", "items": ["?", "?", "?", "?", "?"]}';
+        store.newListCounter++;
         let newList = JSON.parse(listString);
         let current = null;
         async function asyncCreateList(newList) {
@@ -387,14 +388,13 @@ export const useGlobalStore = () => {
                     response = await api.getTop5ListPairs();
                     if(response.data.success) {
                         let pairsArray = response.data.idNamePairs;
-                        let newCounter = store.newListCounter + 1;
                         storeReducer({
                             type: GlobalStoreActionType.CREATE_LIST,
                             payload: {
-                                idNamePairs: pairsArray,
-                                newListCounter: newCounter
+                                idNamePairs: pairsArray
                             }
                         })
+                        store.listMarkedForEditing = current;
                         store.setCurrentList(current);
                     }
                 }
