@@ -342,16 +342,6 @@ export const useGlobalStore = () => {
         store.showDeleteListModal();
     }
 
-    store.showDeleteListModal = function () {
-        let modal = document.getElementById("delete-modal");
-        modal.classList.add("is-visible");
-    }
-
-    store.hideDeleteListModal = function () {
-        let modal = document.getElementById("delete-modal");
-        modal.classList.remove("is-visible");
-    }
-
     store.deleteMarkedList = function (id) {
         // Get the correct list
         async function asyncDeleteListById(id) {
@@ -371,7 +361,6 @@ export const useGlobalStore = () => {
             }
         }
         asyncDeleteListById(id);
-        store.hideDeleteListModal();
     }
 
     store.createNewList = function () {
@@ -402,6 +391,16 @@ export const useGlobalStore = () => {
             }
         }
         asyncCreateList(newList);
+    }
+
+    store.showDeleteListModal = function () {
+        let modal = document.getElementById("delete-modal");
+        modal.classList.add("is-visible");
+    }
+
+    store.hideDeleteListModal = function () {
+        let modal = document.getElementById("delete-modal");
+        modal.classList.remove("is-visible");
     }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME

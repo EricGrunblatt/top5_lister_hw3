@@ -60,7 +60,8 @@ function ListCard(props) {
         setText(event.target.value );
     }
 
-    function handleShowModal() {
+    function handleShowModal(event) {
+        event.stopPropagation();
         store.getListMarkedForDeletion(idNamePair);
     }
 
