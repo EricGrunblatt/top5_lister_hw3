@@ -345,20 +345,18 @@ export const useGlobalStore = () => {
     store.deleteMarkedList = function (id) {
         // Get the correct list
         async function asyncDeleteListById(id) {
-            let response = await api.deleteTop5ListById(id);
-            if(response.data.success) {
+            await api.deleteTop5ListById(id).then(() => {
                 async function asyncGetNewListPairs() {
-                    response = await api.getTop5ListPairs();
-                    if(response.data.success) {
+                    await api.getTop5ListPairs().then(response => {
                         let pairsArray = response.data.idNamePairs;
                         storeReducer({
                             type: GlobalStoreActionType.DELETE_LIST,
                             payload: pairsArray
-                        })
-                    }
+                        });
+                    });
                 }
                 asyncGetNewListPairs();
-            }
+            });
         }
         asyncDeleteListById(id);
     }
@@ -391,6 +389,10 @@ export const useGlobalStore = () => {
             }
         }
         asyncCreateList(newList);
+    }
+
+    window.onload = function() {
+        store.closeCurrentList();
     }
 
     store.showDeleteListModal = function () {
