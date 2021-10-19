@@ -38,13 +38,14 @@ export const useGlobalStore = () => {
     const [store, setStore] = useState({
         idNamePairs: [],
         currentList: null,
-        newListCounter: 0,
+        newListCounter: localStorage.getItem("newListCounter"),
         listNameActive: false,
         itemActive: false,
         listMarkedForDeletion: null,
         disableUndo: true,
         disableRedo: true
     });
+    localStorage.setItem("newListCounter", store.newListCounter);
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
     // HANDLE EVERY TYPE OF STATE CHANGE
@@ -363,8 +364,10 @@ export const useGlobalStore = () => {
 
     store.createNewList = function () {
         // Create a new list
-        let listString = '{"name": "Untitled'+store.newListCounter+'", "items": ["?", "?", "?", "?", "?"]}';
+        let counter = localStorage.getItem("newListCounter");
+        let listString = '{"name": "Untitled'+counter+'", "items": ["?", "?", "?", "?", "?"]}';
         store.newListCounter++;
+        localStorage.setItem("newListCounter", store.newListCounter);
         let newList = JSON.parse(listString);
         let current = null;
         async function asyncCreateList(newList) {

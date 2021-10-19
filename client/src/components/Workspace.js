@@ -12,6 +12,10 @@ function Workspace() {
     const { store } = useContext(GlobalStoreContext);
     store.history = useHistory();
 
+    if(window.location.reload) {
+        window.history.pushState('', '', '/');
+    }
+
     let editItems = "";
     if (store.currentList) {
         editItems = 
