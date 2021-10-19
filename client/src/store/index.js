@@ -45,6 +45,9 @@ export const useGlobalStore = () => {
         disableUndo: true,
         disableRedo: true
     });
+    if(store.newListCounter === null) {
+        store.newListCounter = 0;
+    }
     localStorage.setItem("newListCounter", store.newListCounter);
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
